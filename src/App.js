@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import ReactDOM from 'react-dom';
+import PropTypes from 'prop-types';
 
 // TODO: default
 // class App extends Component {
@@ -614,42 +615,298 @@ import ReactDOM from 'react-dom';
 // }
 
 // TODO: step 23
+// class App extends React.Component {
+//   constructor(){
+//     super();
+//     this.state = {items: []}
+//   }
+//   componentWillMount(){
+//     fetch( 'https://swapi.co/api/people/?format=json' )
+//       .then( response => response.json() )
+//       .then( ({results: items}) => this.setState({items}))
+//   }
+//   filter(e){
+//     this.setState({filter: e.target.value})
+//   }
+//   render(){
+//     let items = this.state.items;
+//     if(this.state.filter){
+//       items = items.filter( item =>
+//         item.name.toLowerCase()
+//         .includes(this.state.filter.toLowerCase()))
+//     }
+//     return (
+//       <div>
+//         <input type="text"
+//         onChange={this.filter.bind(this)}/>
+//         {items.map(item =>
+//           <Person key={item.name} person={item} />)}
+//       </div>
+//     )
+//   }
+// }
+//
+// const Person = (props) => <h4>{props.person.name}</h4>
+//
+// ReactDOM.render(
+//   <App />,
+//   document.getElementById('root')
+// );
+
+
+// TODO: Step 24
+// higher order components
+// purpose of higher order compoments is to share common functionality and information between components
+
+// const HOC = (InnerComponent) => class extends React.Component {
+//   constructor(){
+//     super();
+//     this.state = {count: 0}
+//   }
+//   update(){
+//     this.setState({count: this.state.count + 1})
+//   }
+//   componentWillMount(){
+//     console.log('will mount')
+//   }
+//   render(){
+//     return (
+//       <InnerComponent
+//         {...this.props}
+//         {...this.state}
+//         update={this.update.bind(this)}
+//       />
+//     )
+//   }
+// }
+//
+// class App extends React.Component {
+//   render(){
+//     return (
+//       <div>
+//         <Button>button</Button>
+//         <hr/>
+//         <LabelHOC>label</LabelHOC>
+//       </div>
+//     )
+//   }
+// }
+//
+// const Button = HOC((props) =>
+//   <button onClick={props.update}>{props.children} - {props.count}</button>
+// )
+//
+// class Label extends React.Component {
+//   componentWillMount(){
+//     console.log('label will mount')
+//   }
+//   render(){
+//     return (
+//       <label onMouseMove={this.props.update}>
+//       {this.props.children} - {this.props.count}
+//       </label>
+//     )
+//   }
+// }
+//
+// const LabelHOC = HOC(Label)
+//
+// ReactDOM.render(
+//   <App />,
+//   document.getElementById('root')
+// );
+
+// TODO: Step 25
+// Build a JSX live compiler (this would convert HTML into React JSX)
+// class App extends React.Component {
+//   constructor(){
+//     super();
+//     this.state = {
+//       input: '/* add your jsx here */',
+//       output: '',
+//       err: ''
+//     }
+//   }
+//   update(e){
+//     let code = e.target.value;
+//     try {
+//       this.setState({
+//         output: window.Babel
+//         .transform(code, { presets: ['es2015', 'react']})
+//         .code,
+//         err: ''
+//       })
+//     }
+//     catch(err){
+//       this.setState({err: err.message})
+//     }
+//   }
+//   render(){
+//     return (
+//       <div>
+//         <header>{this.state.err}</header>
+//         <div className="container">
+//           <textarea
+//           onChange={this.update.bind(this)}
+//           defaultValue={this.state.input}/>
+//           <pre>
+//             {this.state.output}
+//           </pre>
+//         </div>
+//       </div>
+//     )
+//   }
+// }
+//
+//
+// ReactDOM.render(<App />, document.getElementById('root'));
+
+// TODO: Step 26
+// understanding React.Children Utilities
+
+// class App extends React.Component {
+//   render(){
+//     return (
+//       <Parent>
+//         <div className="childA"></div>
+//       </Parent>
+//     )
+//   }
+// }
+//
+// class Parent extends React.Component {
+//   render(){
+//     //console.log(this.props.children)
+//     // let items = React.Children
+//     //    .forEach(this.props.children,
+//     //    child => console.log(child.props.className))
+//     // let items = React.Children
+//     // .map(this.props.children, child =>  child)
+//     //let items = React.Children.toArray(this.props.children)
+//
+//     // only expects for only 1 child of the element
+//     let items = React.Children.only(this.props.children)
+//     console.log(items)
+//     return null
+//   }
+// }
+
+// TODO: Step 26
+// Use React.cloneElement to Extend Functionality of Children Components
+// class App extends React.Component {
+//   render(){
+//     return (
+//       <Buttons>
+//         <button value="A">A</button>
+//         <button value="B">B</button>
+//         <button value="C">C</button>
+//       </Buttons>
+//     )
+//   }
+// }
+//
+//
+// class Buttons extends React.Component {
+//   constructor(){
+//     super();
+//     this.state = {selected: 'None'}
+//   }
+//   selectItem(selected){
+//     this.setState({selected})
+//   }
+//   render(){
+//       // to modify the props of the children we need to create new elements out of it
+//       // beacause we have the child descriptors but not the actual child
+//       let fn = child =>
+//         React.cloneElement(child, {
+//           onClick:this.selectItem.bind(this, child.props.value)
+//         })
+//       let items = React.Children.map(this.props.children, fn);
+//       return (
+//         <div>
+//           <h2>You have selected: {this.state.selected}</h2>
+//           {items}
+//         </div>
+//       )
+//   }
+// }
+//
+// ReactDOM.render(
+//   <App />,
+//   document.getElementById('root')
+// );
+
+// TODO: Step 27
+// Write More Reusable React Components with Composable APIs
+
 class App extends React.Component {
   constructor(){
     super();
-    this.state = {items: []}
+    this.state = {
+      red: 0
+    }
+    this.update = this.update.bind(this)
   }
-  componentWillMount(){
-    fetch( 'https://swapi.co/api/people/?format=json' )
-      .then( response => response.json() )
-      .then( ({results: items}) => this.setState({items}))
-  }
-  filter(e){
-    this.setState({filter: e.target.value})
+  update(e){
+    this.setState({
+      red: ReactDOM.findDOMNode(this.refs.red.refs.inp).value
+    })
   }
   render(){
-    let items = this.state.items;
-    if(this.state.filter){
-      items = items.filter( item =>
-        item.name.toLowerCase()
-        .includes(this.state.filter.toLowerCase()))
-    }
     return (
       <div>
-        <input type="text"
-        onChange={this.filter.bind(this)}/>
-        {items.map(item =>
-          <Person key={item.name} person={item} />)}
+        <NumInput
+          ref="red"
+          min={0}
+          max={255}
+          step={0.01}
+          val={+this.state.red}
+          label="Red"
+          update={this.update} />
       </div>
-    )
+    );
   }
 }
 
-const Person = (props) => <h4>{props.person.name}</h4>
+class NumInput extends React.Component {
+  render(){
+    let label = this.props.label !== '' ?
+      <label>{this.props.label} -  {this.props.val}</label> : ''
+    return (
+        <div>
+        <input ref="inp"
+          type={this.props.type}
+          min={this.props.min}
+          max={this.props.max}
+          step={this.props.step}
+          defaultValue={this.props.val}
+          onChange={this.props.update} />
+          {label}
+        </div>
+    );
+  }
+}
 
-ReactDOM.render(
-  <App />,
-  document.getElementById('root')
-);
+NumInput.propTypes = {
+  min: PropTypes.number,
+  max: PropTypes.number,
+  step: PropTypes.number,
+  val: PropTypes.number,
+  label: PropTypes.string,
+  update: PropTypes.func.isRequired,
+  type: PropTypes.oneOf(['number', 'range'])
+}
+
+NumInput.defaultProps = {
+  min: 0,
+  max: 0,
+  step: 1,
+  val: 0,
+  label: '',
+  type: 'range'
+}
+
+
+ReactDOM.render(<App />, document.getElementById('root'));
 
 export default App;
